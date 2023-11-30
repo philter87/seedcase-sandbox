@@ -9,8 +9,23 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
+import sys
 from pathlib import Path
+import environ
+
+env = environ.Env(
+    # set casting, default value
+
+)
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_FILE_PATH = os.path.join(BASE_DIR, '.env.local')
+print(ENV_FILE_PATH)
+environ.Env.read_env(ENV_FILE_PATH)
+
+print(env('CREATE_SUPERUSER'))
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app'
 ]
 
 MIDDLEWARE = [
@@ -73,13 +89,17 @@ WSGI_APPLICATION = 'seedcase.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+print(os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"))
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "NAME": os.environ.get("POSTGRES_DB", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("POSTGRES_USER", "user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -121,3 +141,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Add data file default path
+DATA_FILE_ROOT = os.path.join(BASE_DIR, "datafile")
+DATA_FILE_URL = "datafile/"
