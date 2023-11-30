@@ -15,38 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.views.static import serve
-from django.urls import path, re_path
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
+from django.urls import path, re_path, include
 
 from seedcase.settings import DATA_FILE_URL, DATA_FILE_ROOT
-from .views import home_page, organization_list, project_list, all_organizations
+from .views import home_page, organization_list, project_list
 from .views import data_files
-
-# Setup default API View
-schema_view = get_schema_view(
-    openapi.Info(
-        title="API Documentation",
-        default_version="v1",
-        description="API documentation for Seedcase",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@myproject.com"),
-        license=openapi.License(name="MIT License"),
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
-)
 
 urlpatterns = [
     path("", home_page, name="home"),
-    path(
-        "docs/",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
     path("organizations/", organization_list, name="organizations"),
-    path("api/organizations/", all_organizations, name="api_organizations"),
+    path("projects/", project_list, name="projects"),
     path(DATA_FILE_URL, data_files, name="data_files"),
     re_path(r"^datafile/(?P<path>.*)$", serve, {"document_root": DATA_FILE_ROOT}),
 ]

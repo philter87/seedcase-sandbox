@@ -58,6 +58,10 @@ body {
 	font-family: Helvetica, serif;
 }
 
+.bg-color {
+	background-color: #fafafa;
+}
+
 .footer-under {
 	background-color: #312833;
 	padding-bottom: 100px;
